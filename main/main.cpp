@@ -2,7 +2,7 @@
 /*
 MIT License
 
-Copyright (c) 2019 lewis he
+Copyright (c) 2020 lewis he
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
