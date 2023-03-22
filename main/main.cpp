@@ -63,7 +63,7 @@ static const char *TAG = "AXP20x";
 
 AXP20X_Class axp;
 
-static xQueueHandle gpio_evt_queue = NULL;
+static QueueHandle_t gpio_evt_queue = NULL;
 
 static void IRAM_ATTR axp_isr_handler(void *arg)
 {
@@ -102,7 +102,7 @@ static void axp_irq_init()
  */
 static esp_err_t i2c_master_init(void)
 {
-    int i2c_master_port = I2C_MASTER_NUM;
+    i2c_port_t i2c_master_port = I2C_MASTER_NUM;
     i2c_config_t conf;
     conf.mode = I2C_MODE_MASTER;
     conf.sda_io_num = I2C_MASTER_SDA_IO;
@@ -132,7 +132,7 @@ uint8_t twi_read(uint8_t dev_addr, uint8_t reg_addr, uint8_t *data, uint8_t len)
     i2c_master_write_byte(cmd, (dev_addr << 1) | WRITE_BIT, ACK_CHECK_EN);
     i2c_master_write_byte(cmd, reg_addr, ACK_CHECK_EN);
     i2c_master_stop(cmd);
-    esp_err_t ret =  i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, 1000 / portTICK_RATE_MS);
+    esp_err_t ret =  i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, pdTICKS_TO_MS(1000));
     i2c_cmd_link_delete(cmd);
     if (ret != ESP_OK) {
         return ESP_FAIL;
@@ -145,7 +145,7 @@ uint8_t twi_read(uint8_t dev_addr, uint8_t reg_addr, uint8_t *data, uint8_t len)
     }
     i2c_master_read_byte(cmd, &data[len - 1], NACK_VAL);
     i2c_master_stop(cmd);
-    ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, 1000 / portTICK_RATE_MS);
+    ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, pdTICKS_TO_MS(1000));
     i2c_cmd_link_delete(cmd);
     return ret;
 }
@@ -164,7 +164,7 @@ uint8_t twi_write(uint8_t dev_addr, uint8_t reg_addr, uint8_t *data, uint8_t len
     i2c_master_write_byte(cmd, reg_addr, ACK_CHECK_EN);
     i2c_master_write(cmd, data, len, ACK_CHECK_EN);
     i2c_master_stop(cmd);
-    esp_err_t ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, 1000 / portTICK_RATE_MS);
+    esp_err_t ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, pdTICKS_TO_MS(1000));
     i2c_cmd_link_delete(cmd);
     return ret;
 }
